@@ -1,0 +1,22 @@
+{
+  "Verb to be": {
+    "objetivo": "Usar am, is y are en oraciones simples.",
+    "explicacion": "Usa 'am' con I, 'is' con he, she o it, y 'are' con you, we o they. La forma negativa añade not.",
+    "ejemplos": ["I am a student. = Soy estudiante.", "She is happy. = Ella está feliz.", "They are friends. = Ellos son amigos.", "He is not tired. = Él no está cansado."]
+  },
+  "Personal pronouns": {
+    "objetivo": "Reconocer los pronombres personales en inglés.",
+    "explicacion": "Los pronombres personales son: I (yo), you (tú/ustedes), he (él), she (ella), it (eso), we (nosotros) y they (ellos). Reemplazan nombres.",
+    "ejemplos": ["Ana is my friend. She is kind.", "Luis is a boy. He is tall.", "My sister and I = We.", "My books = They."]
+  },
+  "Articles a/an": {
+    "objetivo": "Usar los artículos indefinidos a y an.",
+    "explicacion": "En general, se usa 'a' antes de sonido consonante y 'an' antes de sonido vocal. Para este nivel practicamos palabras frecuentes.",
+    "ejemplos": ["a book = un libro", "an apple = una manzana", "an orange = una naranja", "a teacher = un profesor"]
+  },
+  "Present simple": {
+    "objetivo": "Formar oraciones de hábitos y rutinas en presente simple.",
+    "explicacion": "Con I/you/we/they se usa el verbo base. Con he/she/it normalmente se agrega -s. Para preguntas se usa do/does; does va con he, she, it.",
+    "ejemplos": ["I play soccer.", "She plays soccer.", "Do you study English?", "Does he work here?"]
+  }
+}

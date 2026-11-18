@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.DS_Store
+# Los registros de los estudiantes se guardan solo en el equipo local.
+datos/estudiantes.json

@@ -69,7 +69,7 @@ def iniciar():
     texto_leccion.config(state="disabled")
 
     ttk.Label(prueba_tab, text="Evaluación personalizada", font=("Arial", 14, "bold")).pack(anchor="w")
-    indicacion = ttk.Label(prueba_tab, text="Inicia sesión antes de responder.")
+    indicacion = ttk.Label(prueba_tab, text="Ingresa tu nombre y abre esta pestaña para comenzar automáticamente.")
     indicacion.pack(anchor="w", pady=8)
     enunciado = ttk.Label(prueba_tab, text="", font=("Arial", 14), wraplength=780)
     enunciado.pack(anchor="w", pady=14)
@@ -149,11 +149,9 @@ def iniciar():
             messagebox.showwarning("Acceso", "Primero ingresa tu nombre.")
             return
         if preguntas_sesion[0] >= configuracion["preguntas_por_sesion"]:
+            # Una nueva sesión conserva el historial para seguir actualizando BKT.
+            preguntas_sesion[0] = 0
             pregunta_actual[0] = None
-            indicacion.config(text="Sesión terminada. Puedes iniciar otra cuando quieras.")
-            enunciado.config(text="Revisa tu progreso y practica el tema recomendado.")
-            resultado.config(text="")
-            return
         p = elegir_pregunta(preguntas, estudiantes.get(nombre, []), configuracion)
         pregunta_actual[0] = p
         respuesta.set("")
@@ -167,7 +165,14 @@ def iniciar():
     def responder():
         p = pregunta_actual[0]
         if p is None:
-            messagebox.showinfo("Quiz", "Inicia una sesión de evaluación.")
+            # Si se presiona «Enviar» antes de generar la siguiente pregunta,
+            # mostramos la pregunta sin registrar una respuesta falsa.
+            if not nombre_actual.get():
+                messagebox.showwarning("Acceso", "Primero escribe tu nombre y pulsa Ingresar.")
+            elif preguntas_sesion[0] >= configuracion["preguntas_por_sesion"]:
+                indicacion.config(text="Sesión terminada. Pulsa Iniciar / siguiente pregunta para una nueva sesión.")
+            else:
+                nueva_pregunta()
             return
         if not respuesta.get():
             messagebox.showwarning("Respuesta", "Selecciona A, B o C.")
@@ -183,7 +188,9 @@ def iniciar():
                         f"  |  Dominio BKT: {anterior:.0%} → {nuevo:.0%}")
         pregunta_actual[0] = None
         indicacion.config(text=f"Registrada {preguntas_sesion[0]} de {configuracion['preguntas_por_sesion']}. "
-                              "Lee la explicación y continúa.")
+                              "Lee la explicación y pulsa Iniciar / siguiente pregunta para continuar."
+                              if preguntas_sesion[0] < configuracion["preguntas_por_sesion"]
+                              else "Sesión completada. Pulsa Iniciar / siguiente pregunta para una nueva sesión.")
         refrescar_progreso()
 
     def entrar():
@@ -201,6 +208,14 @@ def iniciar():
         pestanas.select(inicio_tab)
         mensaje.set(f"Sesión iniciada para {nombre}.")
 
+    def al_cambiar_pestana(_evento=None):
+        # Evita que el alumno llegue al cuestionario sin tener pregunta activa.
+        if (pestanas.select() == str(prueba_tab) and nombre_actual.get()
+                and pregunta_actual[0] is None
+                and preguntas_sesion[0] < configuracion["preguntas_por_sesion"]):
+            nueva_pregunta()
+
+    pestanas.bind("<<NotebookTabChanged>>", al_cambiar_pestana)
     ttk.Button(acceso, text="Ingresar", command=entrar).pack(side="left")
     ttk.Button(acciones, text="Iniciar / siguiente pregunta", command=nueva_pregunta).pack(side="left", padx=4)
     ttk.Button(acciones, text="Enviar respuesta", command=responder).pack(side="left", padx=4)

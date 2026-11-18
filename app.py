@@ -6,12 +6,13 @@ from tkinter import messagebox, ttk
 
 from logica import (cargar_preguntas, elegir_pregunta, guardar_json, leer_json,
                     recomendar_tema, registrar_respuesta, resultados_tema,
-                    resumen_estudiante)
+                    resumen_estudiante, estimar_conocimiento, validar_configuracion)
 
 
 def iniciar():
     carpeta = Path(__file__).resolve().parent
     configuracion = leer_json(carpeta / "configuracion.json", {})
+    validar_configuracion(configuracion)
     preguntas = cargar_preguntas(carpeta / "datos" / "preguntas.csv")
     lecciones = leer_json(carpeta / "datos" / "lecciones.json", {})
     ruta_estudiantes = carpeta / "datos" / "estudiantes.json"
@@ -32,7 +33,7 @@ def iniciar():
     preguntas_sesion = [0]
 
     ttk.Label(ventana, text="Tutor de Inglés Personalizado", font=("Arial", 19, "bold")).pack(anchor="w")
-    ttk.Label(ventana, text="Mini aula virtual: contenidos, evaluación adaptativa y progreso | Nivel A1").pack(anchor="w", pady=(2, 12))
+    ttk.Label(ventana, text="Mini aula virtual con BKT: contenidos, evaluación personalizada y progreso | Nivel A1").pack(anchor="w", pady=(2, 12))
     acceso = ttk.Frame(ventana)
     acceso.pack(fill="x", pady=4)
     ttk.Label(acceso, text="Estudiante:").pack(side="left")
@@ -85,9 +86,9 @@ def iniciar():
     ttk.Label(progreso_tab, text="Resultados personales", font=("Arial", 14, "bold")).pack(anchor="w")
     resumen_texto = ttk.Label(progreso_tab, text="")
     resumen_texto.pack(anchor="w", pady=10)
-    tabla = ttk.Treeview(progreso_tab, columns=("tema", "intentos", "aciertos", "porcentaje"), show="headings", height=7)
+    tabla = ttk.Treeview(progreso_tab, columns=("tema", "intentos", "aciertos", "porcentaje", "dominio"), show="headings", height=7)
     for columna, etiqueta, ancho in [("tema", "Tema", 250), ("intentos", "Intentos", 100),
-                                    ("aciertos", "Aciertos", 100), ("porcentaje", "Porcentaje", 110)]:
+                                    ("aciertos", "Aciertos", 100), ("porcentaje", "% aciertos", 110), ("dominio", "Dominio BKT", 130)]:
         tabla.heading(columna, text=etiqueta)
         tabla.column(columna, width=ancho)
     tabla.pack(fill="x", pady=6)
@@ -120,9 +121,12 @@ def iniciar():
         resumen_texto.config(text=f"Preguntas respondidas: {r['intentos']} | Correctas: {r['aciertos']} | Acierto global: {r['porcentaje']}%")
         for tema in lecciones:
             t = resultados_tema(historial, tema)
-            tabla.insert("", "end", values=(tema, t["intentos"], t["aciertos"], f"{t['porcentaje']}%"))
-        tema = recomendar_tema(preguntas, historial)
-        aviso = f"Te recomendamos estudiar: {tema}."
+            tabla.insert("", "end", values=(tema, t["intentos"], t["aciertos"],
+                                            f"{t['porcentaje']}%",
+                                            f"{estimar_conocimiento(historial, tema, configuracion):.0%}"))
+        tema = recomendar_tema(preguntas, historial, configuracion)
+        dominio = estimar_conocimiento(historial, tema, configuracion)
+        aviso = f"BKT estima {dominio:.0%} de dominio en {tema}. Te recomendamos estudiarlo."
         proxima.config(text=aviso)
         recomendacion.config(text=aviso + " Puedes revisar las lecciones antes de continuar el quiz.")
 
@@ -168,11 +172,15 @@ def iniciar():
         if not respuesta.get():
             messagebox.showwarning("Respuesta", "Selecciona A, B o C.")
             return
-        acierto = registrar_respuesta(estudiantes, nombre_actual.get(), p, respuesta.get())
+        nombre = nombre_actual.get()
+        anterior = estimar_conocimiento(estudiantes.get(nombre, []), p["tema"], configuracion)
+        acierto = registrar_respuesta(estudiantes, nombre, p, respuesta.get())
+        nuevo = estimar_conocimiento(estudiantes[nombre], p["tema"], configuracion)
         guardar_json(ruta_estudiantes, estudiantes)
         preguntas_sesion[0] += 1
         respuesta_correcta = p[p["correcta"].lower()]
-        resultado.config(text=("¡Correcto! " if acierto else f"Necesitas repasar. Era: {respuesta_correcta}. ") + p["explicacion"])
+        resultado.config(text=("¡Correcto! " if acierto else f"Necesitas repasar. Era: {respuesta_correcta}. ") + p["explicacion"] +
+                        f"  |  Dominio BKT: {anterior:.0%} → {nuevo:.0%}")
         pregunta_actual[0] = None
         indicacion.config(text=f"Registrada {preguntas_sesion[0]} de {configuracion['preguntas_por_sesion']}. "
                               "Lee la explicación y continúa.")

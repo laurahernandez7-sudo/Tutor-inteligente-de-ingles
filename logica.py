@@ -35,6 +35,46 @@ def cargar_preguntas(ruta):
     return preguntas
 
 
+
+def validar_configuracion(configuracion):
+    """Los valores de BKT se configuran en JSON."""
+    try:
+        for clave in ("inicial", "aprendizaje", "adivinar", "desliz"):
+            valor = configuracion["bkt"][clave]
+            if not isinstance(valor, (int, float)) or not 0 < valor < 1:
+                raise ValueError(f"BKT: '{clave}' debe estar entre 0 y 1.")
+        if not 0 < configuracion["umbral_reto"] < 1:
+            raise ValueError("El umbral debe estar entre 0 y 1.")
+        if configuracion["preguntas_por_sesion"] <= 0 or configuracion["minimo_intentos_reto"] < 1:
+            raise ValueError("Las cantidades deben ser positivas.")
+    except (KeyError, TypeError) as error:
+        raise ValueError("Falta un parámetro BKT en configuracion.json.") from error
+
+
+def actualizar_bkt(probabilidad, acierto, parametros):
+    """Actualiza P(conocimiento) usando Bayes y transición de aprendizaje."""
+    adivinar = parametros["adivinar"]
+    desliz = parametros["desliz"]
+    aprender = parametros["aprendizaje"]
+    if acierto:
+        numerador = probabilidad * (1 - desliz)
+        denominador = numerador + (1 - probabilidad) * adivinar
+    else:
+        numerador = probabilidad * desliz
+        denominador = numerador + (1 - probabilidad) * (1 - adivinar)
+    posterior = numerador / denominador
+    return posterior + (1 - posterior) * aprender
+
+
+def estimar_conocimiento(historial, tema, configuracion):
+    """Probabilidad estimada BKT para un tema usando su historial individual."""
+    probabilidad = configuracion["bkt"]["inicial"]
+    for registro in historial:
+        if registro["tema"] == tema:
+            probabilidad = actualizar_bkt(probabilidad, registro["acierto"], configuracion["bkt"])
+    return probabilidad
+
+
 def resultados_tema(historial, tema):
     intentos = [r for r in historial if r["tema"] == tema]
     aciertos = sum(1 for r in intentos if r["acierto"])
@@ -42,22 +82,23 @@ def resultados_tema(historial, tema):
             "porcentaje": round(100 * aciertos / len(intentos)) if intentos else 0}
 
 
-def recomendar_tema(preguntas, historial):
-    """Primero explora temas no evaluados; después trabaja el de menor porcentaje."""
+def recomendar_tema(preguntas, historial, configuracion):
+    """Primero explora temas sin evaluar; después el de menor dominio BKT."""
     temas = list(dict.fromkeys(p["tema"] for p in preguntas))
     sin_evaluar = [tema for tema in temas if not resultados_tema(historial, tema)["intentos"]]
     if sin_evaluar:
         return sin_evaluar[0]
-    return min(temas, key=lambda tema: (resultados_tema(historial, tema)["porcentaje"],
+    return min(temas, key=lambda tema: (estimar_conocimiento(historial, tema, configuracion),
                                         resultados_tema(historial, tema)["intentos"]))
 
 
 def elegir_pregunta(preguntas, historial, configuracion):
-    """Selecciona tema según progreso y dificultad según desempeño por tema."""
-    tema = recomendar_tema(preguntas, historial)
-    avance = resultados_tema(historial, tema)
-    nivel = "reto" if (avance["intentos"] >= configuracion["intentos_para_reto"] and
-                       avance["porcentaje"] >= configuracion["porcentaje_para_reto"]) else "basico"
+    """El nivel depende de la probabilidad BKT, no del porcentaje de aciertos."""
+    tema = recomendar_tema(preguntas, historial, configuracion)
+    dominio = estimar_conocimiento(historial, tema, configuracion)
+    intentos = resultados_tema(historial, tema)["intentos"]
+    nivel = ("reto" if intentos >= configuracion["minimo_intentos_reto"]
+             and dominio >= configuracion["umbral_reto"] else "basico")
     candidatas = [p for p in preguntas if p["tema"] == tema and p["nivel"] == nivel]
     if not candidatas:
         candidatas = [p for p in preguntas if p["tema"] == tema]

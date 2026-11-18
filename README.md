@@ -1,66 +1,88 @@
-# Tutor de Inglés Personalizado
+# Tutor de Inglés Personalizado con BKT
 
-**Prototipo académico de Sistemas Inteligentes, cuarto semestre, Universidad de Ibagué.**
+Prototipo académico de **Sistemas Inteligentes (cuarto semestre)**, Universidad de Ibagué.
 
 **Autoras:** María Fernanda Rodríguez (`maria.rodriguez22@estudiantesunibague.edu.co`) y Laura Sofía Hernández (`laura.hernandez7@estudiantesunibague.edu.co`).  
 **Docente:** Alexandra La Cruz (`alexandra.lacruz@unibague.edu.co`).
 
-## ¿Qué es?
-Una aplicación de escritorio con apariencia de aula virtual sencilla: tiene inicio, lecciones, quiz adaptativo, progreso y vista docente. Trabaja contenidos básicos de inglés A1. **No es una copia técnica de Canvas/Moodle ni una web**: imita su organización por módulos y usa solamente Python y su biblioteca estándar.
+## ¿Qué hace?
+Es una aplicación de escritorio en Python básico, con cinco pestañas: Inicio, Lecciones, Quiz adaptativo, Mi progreso y Vista docente. Practica inglés A1 con cuatro lecciones y un banco de 32 preguntas. No es una página web ni un sistema que diagnostique dificultades de aprendizaje.
 
-El componente inteligente es una **regla adaptativa explicable**: primero recorre temas no evaluados, después recomienda el tema con menor porcentaje de aciertos. Cuando el estudiante obtiene al menos el porcentaje configurado y acumula suficientes intentos en ese tema, recibe preguntas de nivel reto. No se usa aprendizaje automático ni se afirma detectar trastornos de aprendizaje.
-
-## Requisitos
-- Python 3.10 o superior con **Tkinter**. En Windows, la instalación oficial de Python normalmente incluye Tkinter.
-- No necesitas internet, bases de datos externas, API, pip ni instalar paquetes.
-- Mantén la estructura de carpetas como viene en el ZIP.
+Su parte inteligente utiliza **Bayesian Knowledge Tracing (BKT)**: actualiza la **probabilidad estimada de dominio** para cada tema a partir de las respuestas de cada estudiante. Es un modelo probabilístico sencillo; no usa redes neuronales ni servicios externos.
 
 ## Ejecutar (Windows)
-1. Descarga y descomprime **todo** el ZIP.
-2. Abre la carpeta `Tutor_de_Ingles_Personalizado` en el Explorador de archivos.
-3. Haz clic en la barra de dirección de la carpeta, escribe `cmd` y pulsa Enter.
-4. Escribe `py app.py` y pulsa Enter. Si Windows no reconoce `py`, prueba `python app.py`.
-5. Si no abre, prueba `py -m tkinter` para verificar que la interfaz gráfica esté instalada.
+1. Descarga el repositorio como ZIP en **Code → Download ZIP** y extrae la carpeta completa.
+2. Instala Python 3.10 o posterior con Tkinter. No se requiere `pip` ni librerías de terceros.
+3. Abre la carpeta que contiene `app.py`; en la barra de dirección escribe `cmd` y presiona Enter.
+4. Ejecuta: `py app.py` (o `python app.py`).
+5. Ingresa un nombre ficticio, estudia una lección, responde el quiz y consulta **Mi progreso**.
 
-## Ejecutar (Mac / Linux)
-Abre una terminal en la carpeta del proyecto y usa `python3 app.py`. Es necesaria una sesión gráfica; si no abre, comprueba Tkinter (`python3 -m tkinter`).
+En Linux/macOS usa `python3 app.py` si Tkinter está disponible.
 
-## Guía de uso
-1. Escribe un nombre de demostración, por ejemplo **Estudiante Demo**, y haz clic en **Ingresar**.
-2. Abre **Lecciones**, cambia entre los 4 temas y lee la explicación.
-3. Ve a **Quiz adaptativo**, haz clic en **Iniciar / siguiente pregunta**, selecciona A, B o C y pulsa **Enviar respuesta**.
-4. Lee la explicación. Presiona **Iniciar / siguiente pregunta** para continuar hasta completar cinco respuestas.
-5. Abre **Mi progreso**: verás aciertos por tema y el tema recomendado.
-6. Abre **Vista docente**: muestra un resumen de nombres y resultados guardados en este computador.
-7. Para empezar otra sesión del mismo estudiante, vuelve a pulsar **Ingresar** con el mismo nombre. La información anterior continúa guardada.
+## Modelo BKT explicado con números
+Para cada estudiante y cada tema se calcula `P(L)`, probabilidad de conocer esa habilidad. Cada respuesta actualiza la probabilidad con el teorema de Bayes y una transición de aprendizaje.
 
-**Demostración de adaptación:** ingresa como `Estudiante Demo`. Contesta mal la primera pregunta del tema `Verb to be` y bien las preguntas de `Personal pronouns`, `Articles a/an` y `Present simple`. La siguiente pregunta prioriza `Verb to be` por tener menor porcentaje de aciertos. El progreso puede comprobarse en **Mi progreso**.
+Los parámetros están en `configuracion.json`:
 
-## Archivos
-- `app.py`: pantallas y botones hechos con Tkinter.
-- `logica.py`: carga de datos, evaluación, recomendación y guardado.
-- `datos/preguntas.csv`: **32 preguntas** propias del prototipo, 4 temas y 2 niveles.
-- `datos/lecciones.json`: contenido de las **4 lecciones**.
-- `configuracion.json`: parámetros editables de duración de sesión y nivel reto.
-- `datos/estudiantes.json`: historial local creado al utilizar el programa. No subas datos reales de estudiantes a GitHub.
-- `pruebas/test_logica.py`: 8 pruebas automatizadas.
-- Los materiales de entrega (informe PDF, video y guiones) se comparten por separado; no son necesarios para ejecutar el código.
+| Parámetro | Valor ilustrativo | Significado |
+|---|---:|---|
+| `inicial` | 0.30 | P(L0): probabilidad de conocimiento antes de responder |
+| `aprendizaje` | 0.15 | P(T): aprendizaje por oportunidad de práctica |
+| `adivinar` | 0.20 | P(G): acierto sin dominio |
+| `desliz` | 0.10 | P(S): error a pesar del dominio |
 
-## Probar la lógica
-En la terminal, desde la carpeta del proyecto:
+Si responde **bien**:
+`posterior = (P * (1 - S)) / (P * (1 - S) + (1 - P) * G)`
+
+Si responde **mal**:
+`posterior = (P * S) / (P * S + (1 - P) * (1 - G))`
+
+Después:
+`P_nueva = posterior + (1 - posterior) * T`
+
+Con los valores iniciales, un acierto estima aproximadamente **71 %** de dominio y un error, **19 %**. No son porcentajes de acierto: son estimaciones del modelo. Los cuatro parámetros se fijaron como ejemplo académico y **no se entrenaron con datos de estudiantes**.
+
+## ¿Cómo elige el siguiente ejercicio?
+1. Explora los temas todavía no evaluados para obtener una primera respuesta de cada uno.
+2. Cuando todos tienen respuestas, recomienda el de **menor dominio BKT**.
+3. Si el tema cuenta con **dos intentos o más** y su dominio BKT alcanza **0.75**, propone nivel `reto`; de lo contrario, nivel `basico`.
+4. Evita repetir preguntas hasta agotar las disponibles en ese nivel.
+5. Registra el historial local en `datos/estudiantes.json`. Se recalcula BKT a partir de ese historial cuando se abre la aplicación.
+
+Los parámetros educativos no son constantes globales de Python: se editan en `configuracion.json`. Las preguntas y respuestas están en CSV.
+
+## Archivos del repositorio
+
+```text
+app.py                      Interfaz Tkinter
+logica.py                   Cálculo BKT, selección y guardado
+configuracion.json          Valores configurables del modelo
+datos/preguntas.csv         32 ejercicios A1
+datos/lecciones.json        4 lecciones
+pruebas/test_logica.py      13 pruebas automáticas
+README.md                   Este documento
+.gitignore                  Excluye registros locales y archivos temporales
+```
+
+## Pruebas
+Desde la carpeta del programa, ejecuta:
 
 ```bash
 py -m unittest discover -s pruebas -v
 ```
 
-En Mac/Linux cambia `py` por `python3`. El resultado esperado para la versión entregada es `Ran 8 tests` y `OK`. Esto verifica la lógica; **no es un experimento pedagógico con estudiantes**.
+El resultado esperado en esta versión es **`Ran 13 tests` y `OK`**. Los casos comprueban fórmulas BKT con aciertos y errores, independencia por tema, configuraciones, selección de dificultad, lectura CSV y guardado JSON. Esto verifica el software, **no** demuestra una mejora de aprendizaje real.
 
-## ¿Cómo se personaliza?
-- **Inicio:** si un tema nunca se ha evaluado, comienza por él.
-- **Diagnóstico progresivo:** el programa visita temas todavía no evaluados.
-- **Refuerzo:** después elige el tema que tenga menos aciertos porcentuales.
-- **Reto:** configura `intentos_para_reto` y `porcentaje_para_reto` en `configuracion.json`.
-- **Retroalimentación:** cada respuesta incluye si fue correcta, cuál era la respuesta adecuada y por qué.
-- **Persistencia:** los resultados se almacenan en JSON y se recuperan por nombre.
+## Limitaciones
+- Valores BKT propuestos para demostración; no ajustados estadísticamente.
+- Solo cuatro temas y 32 preguntas.
+- Sin autenticación ni servicio web; se recomienda usar nombres ficticios.
+- No diagnostica dislexia u otras condiciones y no ha sido validado en participantes reales.
+- La vista docente sirve solamente como demostración local.
 
+## Enlaces de entrega
+- **Código GitHub:** https://github.com/laurahernandez7-sudo/Tutor-inteligente-de-ingles
+- **Datos Drive:** https://drive.google.com/drive/folders/1mugCjFFBAV3XXrO9VuerbwRmmz-xFoUG?usp=sharing (el equipo debe comprobar permisos)
+- **Video promocional:** pegar el enlace real del archivo cuando se publique en Drive.
 
+**Referencia base BKT:** Corbett, A. T., y Anderson, J. R. (1994). *Knowledge tracing: Modeling the acquisition of procedural knowledge*. User Modeling and User-Adapted Interaction, 4, 253–278. https://doi.org/10.1007/BF01099821

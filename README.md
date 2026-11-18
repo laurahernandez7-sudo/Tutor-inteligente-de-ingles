@@ -63,19 +63,4 @@ En Mac/Linux cambia `py` por `python3`. El resultado esperado para la versión e
 - **Retroalimentación:** cada respuesta incluye si fue correcta, cuál era la respuesta adecuada y por qué.
 - **Persistencia:** los resultados se almacenan en JSON y se recuperan por nombre.
 
-### Restricción de código sin constantes
-No hay constantes globales de configuración (por ejemplo, `NOTA_MINIMA = 75`) ni respuestas de preguntas incrustadas en el algoritmo. Las reglas ajustables viven en `configuracion.json`, y los contenidos en CSV/JSON. En cualquier programa deben existir algunos valores literales, como nombres de campos, etiquetas de botones y respuestas A/B/C; eliminarlos literalmente impediría que funcione.
 
-## Limitaciones que deben explicar con honestidad
-- Funciona en un solo equipo y los usuarios se identifican **por nombre**, sin contraseña. Usar nombres inventados durante la demostración.
-- No es servicio web, no tiene autenticación real ni servidor multiusuario.
-- Un porcentaje de aciertos en pocas preguntas no representa una medición certificada del nivel de inglés.
-- No diagnostica dislexia ni ninguna condición o dificultad clínica de aprendizaje.
-- Las pruebas automatizadas no prueban mejoras reales de aprendizaje. Eso necesitaría participantes, consentimiento y más sesiones.
-
-## Enlaces de entrega
-- **GitHub:** https://github.com/laurahernandez7-sudo/Tutor-inteligente-de-ingles
-- **Drive:** subir `datos/preguntas.csv` y `datos/lecciones.json` a Drive, compartir la carpeta con la docente y pegar la URL.
-- **Video de tres minutos:** grabar la pantalla ejecutando `app.py`, subir el video y agregar su URL al informe.
-
-Para evaluar el código basta con descargar este repositorio y ejecutar `py app.py`. El informe PDF, el video y sus guiones se entregan aparte.

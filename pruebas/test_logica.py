@@ -5,7 +5,7 @@ from pathlib import Path
 
 from logica import (cargar_preguntas, elegir_pregunta, guardar_json, leer_json,
                     recomendar_tema, registrar_respuesta, resultados_tema,
-                    resumen_estudiante)
+                    resumen_estudiante, actualizar_bkt, estimar_conocimiento, validar_configuracion)
 
 
 class PruebasTutor(unittest.TestCase):
@@ -16,21 +16,53 @@ class PruebasTutor(unittest.TestCase):
             {"id": "3", "tema": "Articles", "nivel": "basico", "correcta": "C"},
             {"id": "4", "tema": "Articles", "nivel": "reto", "correcta": "B"},
         ]
-        self.configuracion = {"intentos_para_reto": 2, "porcentaje_para_reto": 75}
+        self.configuracion = {
+            "preguntas_por_sesion": 5, "minimo_intentos_reto": 2,
+            "umbral_reto": .75,
+            "bkt": {"inicial": .30, "aprendizaje": .15,
+                    "adivinar": .20, "desliz": .10}
+        }
+
+
+    def test_bkt_correcta_formula(self):
+        esperado = (0.27 / 0.41) + (1 - 0.27 / 0.41) * 0.15
+        resultado = actualizar_bkt(.30, True, self.configuracion["bkt"])
+        self.assertAlmostEqual(resultado, esperado)
+
+    def test_bkt_incorrecta_formula(self):
+        esperado = (0.03 / 0.59) + (1 - 0.03 / 0.59) * 0.15
+        resultado = actualizar_bkt(.30, False, self.configuracion["bkt"])
+        self.assertAlmostEqual(resultado, esperado)
+
+    def test_bkt_por_tema(self):
+        historial = [{"tema": "To be", "acierto": True},
+                     {"tema": "Articles", "acierto": False}]
+        self.assertGreater(estimar_conocimiento(historial, "To be", self.configuracion), .30)
+        self.assertLess(estimar_conocimiento(historial, "Articles", self.configuracion), .30)
+
+    def test_bkt_parametros_editables(self):
+        otra = dict(self.configuracion)
+        otra["bkt"] = dict(self.configuracion["bkt"], aprendizaje=.40)
+        historial = [{"tema": "To be", "acierto": True}]
+        self.assertGreater(estimar_conocimiento(historial, "To be", otra),
+                           estimar_conocimiento(historial, "To be", self.configuracion))
+
+    def test_configuracion_bkt_valida(self):
+        validar_configuracion(self.configuracion)
 
     def test_inicia_por_un_tema_no_evaluado(self):
-        self.assertEqual(recomendar_tema(self.preguntas, []), "To be")
+        self.assertEqual(recomendar_tema(self.preguntas, [], self.configuracion), "To be")
 
     def test_cambia_al_tema_sin_evaluar(self):
         datos = {"Ana": []}
         registrar_respuesta(datos, "Ana", self.preguntas[0], "A")
-        self.assertEqual(recomendar_tema(self.preguntas, datos["Ana"]), "Articles")
+        self.assertEqual(recomendar_tema(self.preguntas, datos["Ana"], self.configuracion), "Articles")
 
     def test_refuerza_el_tema_con_mas_errores(self):
         datos = {"Ana": []}
         registrar_respuesta(datos, "Ana", self.preguntas[0], "B")
         registrar_respuesta(datos, "Ana", self.preguntas[2], "C")
-        self.assertEqual(recomendar_tema(self.preguntas, datos["Ana"]), "To be")
+        self.assertEqual(recomendar_tema(self.preguntas, datos["Ana"], self.configuracion), "To be")
 
     def test_sube_a_reto_por_desempeno(self):
         datos = {"Ana": []}

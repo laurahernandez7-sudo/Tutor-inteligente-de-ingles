@@ -44,7 +44,7 @@ Abre una terminal en la carpeta del proyecto y usa `python3 app.py`. Es necesari
 - `configuracion.json`: parámetros editables de duración de sesión y nivel reto.
 - `datos/estudiantes.json`: historial local creado al utilizar el programa. No subas datos reales de estudiantes a GitHub.
 - `pruebas/test_logica.py`: 8 pruebas automatizadas.
-- `documentacion/`: informe, guion de video y defensa.
+- Los materiales de entrega (informe PDF, video y guiones) se comparten por separado; no son necesarios para ejecutar el código.
 
 ## Probar la lógica
 En la terminal, desde la carpeta del proyecto:
@@ -74,8 +74,8 @@ No hay constantes globales de configuración (por ejemplo, `NOTA_MINIMA = 75`) n
 - Las pruebas automatizadas no prueban mejoras reales de aprendizaje. Eso necesitaría participantes, consentimiento y más sesiones.
 
 ## Enlaces de entrega
-- **GitHub:** publicar este código en un repositorio accesible y pegar su URL en el informe.
+- **GitHub:** https://github.com/laurahernandez7-sudo/Tutor-inteligente-de-ingles
 - **Drive:** subir `datos/preguntas.csv` y `datos/lecciones.json` a Drive, compartir la carpeta con la docente y pegar la URL.
 - **Video de tres minutos:** grabar la pantalla ejecutando `app.py`, subir el video y agregar su URL al informe.
 
-Consulta el paso a paso exacto en `documentacion/INSTRUCCIONES_ENTREGA.md`.
+Para evaluar el código basta con descargar este repositorio y ejecutar `py app.py`. El informe PDF, el video y sus guiones se entregan aparte.

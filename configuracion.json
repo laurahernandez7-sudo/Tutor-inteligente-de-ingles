@@ -1,5 +1,11 @@
 {
   "preguntas_por_sesion": 5,
-  "intentos_para_reto": 2,
-  "porcentaje_para_reto": 75
+  "minimo_intentos_reto": 2,
+  "umbral_reto": 0.75,
+  "bkt": {
+    "inicial": 0.3,
+    "aprendizaje": 0.15,
+    "adivinar": 0.2,
+    "desliz": 0.1
+  }
 }

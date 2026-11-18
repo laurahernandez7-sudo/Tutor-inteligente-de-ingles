@@ -82,6 +82,6 @@ El resultado esperado en esta versión es **`Ran 13 tests` y `OK`**. Los casos c
 
 ## Enlaces de entrega
 - **Código GitHub:** https://github.com/laurahernandez7-sudo/Tutor-inteligente-de-ingles
-- **Datos Drive + video promocional de 3 minutos :** https://drive.google.com/drive/folders/1mugCjFFBAV3XXrO9VuerbwRmmz-xFoUG?usp=sharing (el equipo debe comprobar permisos)
+- **Datos Drive + video promocional de 3 minutos :** https://drive.google.com/drive/folders/1mugCjFFBAV3XXrO9VuerbwRmmz-xFoUG?usp=sharing 
 - 
 **Referencia base BKT:** Corbett, A. T., y Anderson, J. R. (1994). *Knowledge tracing: Modeling the acquisition of procedural knowledge*. User Modeling and User-Adapted Interaction, 4, 253–278. https://doi.org/10.1007/BF01099821

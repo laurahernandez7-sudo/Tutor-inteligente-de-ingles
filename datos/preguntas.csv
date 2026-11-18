@@ -1,0 +1,33 @@
+id,tema,nivel,pregunta,a,b,c,correcta,explicacion
+1,Verb to be,basico,Complete: I ___ a student.,am,is,are,A,Con I se usa am.
+2,Verb to be,basico,Complete: She ___ my sister.,are,is,am,B,Con she se usa is.
+3,Verb to be,basico,Complete: They ___ friends.,is,am,are,C,Con they se usa are.
+4,Verb to be,basico,Complete: You ___ happy.,are,is,am,A,Con you se usa are.
+5,Verb to be,reto,Choose the correct sentence.,He are tall.,He is tall.,He am tall.,B,Con he se usa is.
+6,Verb to be,reto,Complete: We ___ not tired.,is,am,are,C,Con we se usa are.
+7,Verb to be,reto,Complete: It ___ a small cat.,is,are,am,A,Con it se usa is.
+8,Verb to be,reto,Complete: My parents ___ at home.,am,are,is,B,Parents es plural y usa are.
+9,Personal pronouns,basico,Replace Maria: ___ is a student.,He,She,It,B,Maria puede reemplazarse por she en este ejemplo.
+10,Personal pronouns,basico,Replace Luis: ___ is my friend.,He,It,They,A,Luis puede reemplazarse por he.
+11,Personal pronouns,basico,Replace my friends: ___ are here.,She,He,They,C,My friends es plural y se reemplaza por they.
+12,Personal pronouns,basico,Replace my brother and I: ___ are students.,They,We,It,B,My brother and I incluye al hablante y usa we.
+13,Personal pronouns,reto,Choose the pronoun for a table.,She,It,He,B,Un objeto singular puede reemplazarse por it.
+14,Personal pronouns,reto,Replace Sara and Pablo: ___ study English.,They,We,She,A,Sara and Pablo es plural y usa they.
+15,Personal pronouns,reto,Complete: ___ am from Colombia.,They,I,You,B,Am se usa con I.
+16,Personal pronouns,reto,Replace my mother: ___ is a doctor.,It,He,She,C,My mother se reemplaza por she.
+17,Articles a/an,basico,Choose: ___ apple.,a,an,the,B,Apple empieza con sonido vocal y usa an.
+18,Articles a/an,basico,Choose: ___ book.,an,a,the,B,Book empieza con sonido consonante y usa a.
+19,Articles a/an,basico,Choose: ___ orange.,a,the,an,C,Orange empieza con sonido vocal y usa an.
+20,Articles a/an,basico,Choose: ___ teacher.,a,an,the,A,Teacher empieza con sonido consonante y usa a.
+21,Articles a/an,reto,Choose: ___ elephant.,a,an,the,B,Elephant empieza con sonido vocal y usa an.
+22,Articles a/an,reto,Choose: ___ university.,a,an,the,A,University comienza con sonido /yu/ y usa a.
+23,Articles a/an,reto,Choose: ___ hour.,a,the,an,C,Hour tiene h muda y comienza con sonido vocal: an.
+24,Articles a/an,reto,Choose: ___ European city.,an,a,the,B,European comienza con sonido /yu/ y usa a.
+25,Present simple,basico,Complete: I ___ English.,studies,study,studying,B,Con I se usa el verbo base study.
+26,Present simple,basico,Complete: She ___ soccer.,play,playing,plays,C,Con she en afirmativo se usa plays.
+27,Present simple,basico,Complete: They ___ every day.,work,works,working,A,Con they se usa el verbo base work.
+28,Present simple,basico,Complete: He ___ in Ibague.,live,lives,living,B,Con he en afirmativo se usa lives.
+29,Present simple,reto,Complete: ___ you like music?,Does,Do,Is,B,Las preguntas con you usan do.
+30,Present simple,reto,Complete: ___ she speak English?,Do,Is,Does,C,Las preguntas con she usan does.
+31,Present simple,reto,Complete: My father ___ coffee.,drinks,drink,drinking,A,Con my father se añade s al verbo drink.
+32,Present simple,reto,Choose the correct sentence.,She don't work.,She doesn't work.,She doesn't works.,B,Con she la negación es doesn't más verbo base.

@@ -13,7 +13,7 @@ Su parte inteligente utiliza **Bayesian Knowledge Tracing (BKT)**: actualiza la 
 ## Ejecutar (Windows)
 1. Descarga el repositorio como ZIP en **Code → Download ZIP** y extrae la carpeta completa.
 2. Instala Python 3.10 o posterior con Tkinter. No se requiere `pip` ni librerías de terceros.
-3. Abre la carpeta que contiene `app.py`; en la barra de dirección escribe `cmd` y presiona Enter.
+3. Abre la carpeta que contiene `app.py`; en la barra de dirección escribe `cd "Tutor-inteligente-de-ingles-main" ` y presiona Enter.
 4. Ejecuta: `py app.py` (o `python app.py`).
 5. Ingresa un nombre ficticio, estudia una lección, responde el quiz y consulta **Mi progreso**.
 
